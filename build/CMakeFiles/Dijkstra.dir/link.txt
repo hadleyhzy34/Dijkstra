@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/Dijkstra.dir/src/main.cpp.o  -o Dijkstra  -Wl,-rpath,/home/hadley/anaconda3/envs/new/lib libplan.a /home/hadley/anaconda3/envs/new/lib/libpython3.9.so 

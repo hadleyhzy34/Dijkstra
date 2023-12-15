@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/hadley/Developments/Dijkstra/src/Dijsktra.cpp
+Dijsktra.h
+/home/hadley/Developments/Dijkstra/src/Dijsktra.h
+algorithm
+-
+assert.h
+-
+cmath
+-
+iostream
+-
+limits
+-
+map
+-
+math.h
+-
+unordered_map
+-
+utility
+-
+
+/home/hadley/Developments/Dijkstra/src/Dijsktra.h
+iostream
+-
+limits.h
+-
+limits
+-
+map
+-
+unordered_map
+-
+vector
+-
+
