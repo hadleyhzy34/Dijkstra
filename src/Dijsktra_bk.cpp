@@ -6,7 +6,6 @@
 #include <limits>
 #include <map>
 #include <math.h>
-#include <memory>
 #include <unordered_map>
 #include <utility>
 /* std::ostream &operator<<(std::ostream &os, */
@@ -42,18 +41,18 @@ Dijkstra::Dijkstra(float ox, float oy, float gx, float gy, float res, float rad,
 
 Dijkstra::~Dijkstra() {}
 
-Node *Dijkstra::getNode(float px, float py, float val) {
+Node Dijkstra::getNode(float px, float py, float val) {
   int idx = std::round((px - this->worldMap.minX) / this->resolution);
   int idy = std::round((py - this->worldMap.minY) / this->resolution);
-  return new Node(idx, idy, px, py, nullptr);
+  return {idx, idy, px, py, val, -1};
 }
 
 float Dijkstra::getPosition(int index, float minPosition) {
   return index * this->resolution + minPosition;
 }
 
-int Dijkstra::getIdx(Node *node) {
-  return node->idy * this->worldMap.widthX + node->idx;
+int Dijkstra::getIdx(Node node) {
+  return node.idy * this->worldMap.widthX + node.idx;
 }
 
 int Dijkstra::getIdx(float px, float py) {
@@ -63,7 +62,7 @@ int Dijkstra::getIdx(float px, float py) {
   return idy * this->worldMap.widthX + idx;
 }
 
-void Dijkstra::buildObsMap(float ox, float oy) {
+void Dijkstra::calcObsMap(float ox, float oy) {
   for (auto i = 0; i < this->worldMap.widthX; i++) {
     float x = i * this->resolution + this->worldMap.minX;
     for (auto j = 0; j < this->worldMap.widthY; j++) {
@@ -76,18 +75,18 @@ void Dijkstra::buildObsMap(float ox, float oy) {
   }
 }
 
-bool Dijkstra::checkNode(struct Node *node) {
-  if (node->px < this->worldMap.minX) {
+bool Dijkstra::checkNode(struct Node node) {
+  if (node.px < this->worldMap.minX) {
     return false;
-  } else if (node->py < this->worldMap.minY) {
+  } else if (node.py < this->worldMap.minY) {
     return false;
-  } else if (node->px >= this->worldMap.maxX) {
+  } else if (node.px >= this->worldMap.maxX) {
     return false;
-  } else if (node->py >= this->worldMap.maxY) {
+  } else if (node.py >= this->worldMap.maxY) {
     return false;
   }
 
-  if (this->obsMap[node->idx][node->idy]) {
+  if (this->obsMap[node.idx][node.idy]) {
     return false;
   }
 
@@ -105,81 +104,75 @@ void Dijkstra::plan() {
     }
 
     // dfs on all neighbors of resultSet
-    for (auto const &itr : this->resultSet) {
-      auto idx = itr.first;
-      auto node = itr.second;
+    for (auto const &res : this->resultSet) {
+      Node node = res.second;
       // get current node neighbors
       for (auto motion : this->motionVector) {
-        float nPx = node->px + motion[0] * this->resolution;
-        float nPy = node->py + motion[1] * this->resolution;
+        float nPx = node.px + motion[0] * this->resolution;
+        float nPy = node.py + motion[1] * this->resolution;
+        int nIdx = this->getIdx(nPx, nPy);
 
-        Node *neighbor = this->getNode(nPx, nPy);
-        int ndx = this->getIdx(neighbor);
-
-        std::cout << ndx << std::endl;
         // check node if its already in resultSet
-        if (this->resultSet.find(ndx) != this->resultSet.end()) {
+        if (this->resultSet.find(nIdx) != this->resultSet.end()) {
           continue;
         }
 
         // check node if its already in openSet
-        if (this->openSet.find(ndx) == this->openSet.end()) {
+        if (this->openSet.find(nIdx) == this->openSet.end()) {
+          Node neighbor = this->getNode(nPx, nPy);
+
           if (!this->checkNode(neighbor)) {
             continue;
           }
 
           // add this node to openset
-          this->openSet[ndx] = neighbor;
+          this->openSet[nIdx] = neighbor;
         }
 
         // update this node shortest path value
-        if (motion[2] * this->resolution + node->val <
-            this->openSet[ndx]->val) {
-          this->openSet[ndx]->val = motion[2] * this->resolution + node->val;
-          this->openSet[ndx]->parent = node;
-          std::cout << "updated node is: " << ndx << std::endl;
+        if (motion[2] * this->resolution + node.val < this->openSet[nIdx].val) {
+          this->openSet[nIdx].val = motion[2] * this->resolution + node.val;
+          this->openSet[nIdx].parent = res.first;
         }
       }
     }
 
     auto iter = std::min_element(openSet.begin(), openSet.end(),
                                  [](const auto &l, const auto &r) {
-                                   return l.second->val < r.second->val;
+                                   return l.second.val < r.second.val;
                                  });
 
-    int cdx = iter->first;
-    Node *curNode = iter->second;
+    int curIdx = iter->first;
+    Node curNode = iter->second;
 
     // check if this node is reached, be careful that curNode and endNode
     // are two different node object
-    if (curNode->idx == this->endNode->idx &&
-        curNode->idy == this->endNode->idy) {
-      endNode->parent = curNode->parent;
-      std::cout << curNode->idx << "||" << curNode->idy << "||"
-                << curNode->parent->idx << std::endl;
+    if (curNode.idx == this->endNode.idx && curNode.idy == this->endNode.idy) {
+      endNode.parent = curNode.parent;
+      std::cout << curNode.idx << "||" << curNode.idy << "||" << curNode.parent
+                << std::endl;
       std::cout << "goal found\n";
       break;
     }
     // mv this node from openSet to resultSet
-    this->openSet.erase(cdx);
-    this->resultSet[cdx] = curNode;
+    this->openSet.erase(curIdx);
+    this->resultSet[curIdx] = curNode;
     /* std::cout << "check existence: " << curNode.val << std::endl; */
   }
 }
 
 void Dijkstra::calcPath() {
-  Node *node = this->endNode;
-  this->path.push_back(std::make_pair(node->px, node->py));
+  Node curNode = this->endNode;
+  this->path.push_back(std::make_pair(curNode.px, curNode.py));
 
-  /* std::cout << "node position is: " << curNode.idx << "||" << curNode.idy */
-  /*           << "||" << curNode.px << " " << curNode.py << " " <<
-   * curNode.parent */
-  /*           << std::endl; */
+  std::cout << "node position is: " << curNode.idx << "||" << curNode.idy
+            << "||" << curNode.px << " " << curNode.py << " " << curNode.parent
+            << std::endl;
 
-  while (node->parent) {
-    node = node->parent;
-    this->path.push_back(std::make_pair(node->px, node->py));
-    std::cout << "node position is: " << node->px << " " << node->py
+  while (curNode.parent != -1) {
+    curNode = this->resultSet[curNode.parent];
+    this->path.push_back(std::make_pair(curNode.px, curNode.py));
+    std::cout << "node position is: " << curNode.px << " " << curNode.py
               << std::endl;
   }
 }
