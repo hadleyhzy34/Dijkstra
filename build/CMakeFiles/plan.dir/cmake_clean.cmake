@@ -1,6 +1,5 @@
 file(REMOVE_RECURSE
   "CMakeFiles/plan.dir/src/Dijsktra.cpp.o"
-  "CMakeFiles/plan.dir/src/Dijsktra.cpp.o.d"
   "libplan.a"
   "libplan.pdb"
 )

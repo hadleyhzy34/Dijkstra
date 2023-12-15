@@ -25,8 +25,8 @@ struct Node {
   float px, py;
   float val;
   Node *parent;
-  Node(int i, int j, float x, float y, Node *p = nullptr)
-      : idx(i), idy(j), px(x), py(y), parent(p) {
+  Node(int i, int j, float x, float y, float v, Node *p = nullptr)
+      : idx(i), idy(j), px(x), py(y), val(v), parent(p) {
   } // user-defined default constructor
 };
 
@@ -56,8 +56,6 @@ public:
   float getPosition(int, float);
   // get index of node
   int getIdx(struct Node *);
-  int getIdx(float, float);
-  // get node
   /* Node getNode(float, float); */
   Node *getNode(float, float, float = std::numeric_limits<float>::max());
   /* Node *setNode(float, float, float = std::numeric_limits<float>::max()); */

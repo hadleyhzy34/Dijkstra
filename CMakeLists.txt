@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(PACKAGE_NAME matplotlib_cpp)
 set(INSTALL_CONFIGDIR${CMAKE_INSTALL_LIBDIR}/${PACKAGE_NAME}/cmake)
 set(Python3_FIND_STRATEGY LOCATION)
-set(Python3_ROOT_DIR "/Users/hadley/anaconda3/envs/codeformer")
+set(Python3_ROOT_DIR "/home/hadley/anaconda3/envs/new")
 
 # debug mode
 SET(CMAKE_BUILD_TYPE "Debug")

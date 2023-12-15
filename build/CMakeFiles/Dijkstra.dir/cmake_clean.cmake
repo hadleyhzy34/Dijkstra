@@ -1,6 +1,5 @@
 file(REMOVE_RECURSE
   "CMakeFiles/Dijkstra.dir/src/main.cpp.o"
-  "CMakeFiles/Dijkstra.dir/src/main.cpp.o.d"
   "Dijkstra"
   "Dijkstra.pdb"
 )

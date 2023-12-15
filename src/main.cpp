@@ -1,7 +1,8 @@
 #include "Dijsktra.h"
+#include "matplotlibcpp.h"
 #include <iostream>
 
-// namespace plt = matplotlibcpp;
+namespace plt = matplotlibcpp;
 
 int main(int, char **) {
   struct World map = {-4., 4., -4., 4., 0, 0};
@@ -9,7 +10,7 @@ int main(int, char **) {
   float resolution = 0.1;
 
   float sx = 2.3;
-  float sy = 1.5;
+  float sy = 1.8;
   float gx = 2.8;
   float gy = 2.3;
 
@@ -31,4 +32,27 @@ int main(int, char **) {
 
   dij.calcPath();
   dij.printPath();
+
+  /* plt::plot({1, 3, 2, 4}); */
+  std::vector<float> x;
+  std::vector<float> y;
+  for (auto obstacle : obstacles) {
+    x.push_back(obstacle[0]);
+    y.push_back(obstacle[1]);
+  }
+
+  std::vector<float> pathX;
+  std::vector<float> pathY;
+  for (auto path : dij.getPath()) {
+    pathX.push_back(path.first);
+    pathY.push_back(path.second);
+  }
+  /* plt::scatter({0.}, {0.}); */
+  /* plt::scatter({3.5}, {3.5}); */
+  std::vector<float> ox = {sx, gx};
+  std::vector<float> oy = {sy, gy};
+  plt::scatter(ox, oy, 'g');
+  plt::scatter(x, y, 'b');
+  plt::plot(pathX, pathY, "r--");
+  plt::show();
 }
