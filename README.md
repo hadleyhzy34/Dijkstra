@@ -1,6 +1,6 @@
-# AStar
+# Dijkstra
 
-a* path planning algorithm implementation and visualization based on C++ and matplotlib
+shortest path algorithm
 
 ## Installation
 
@@ -15,13 +15,13 @@ pip install matplotlib
 * Download Project
 
 ```console
-git clone https://github.com/hadleyhzy34/AStar.git
-cd AStar
+git clone https://github.com/hadleyhzy34/Dijkstra.git
+cd Dijkstra
 ```
 
 * Modify `CMakeLists.txt` file
 
-go to file `CMakeLists.txt` and change `Python3_ROOT_DIR` to your own conda env folder.
+go to file `CMakeLists.txt` and change `Python3_ROOT_DIR` to your own `conda env` folder.
 
 * Build project
 
@@ -30,9 +30,9 @@ mkdir build
 cd build
 cmake ..
 make
-./AStar
+./Dijkstra
 ```
 
 ## Result visualization
 
-![result](https://github.com/hadleyhzy34/AStar/blob/main/demo.png)
+![result](https://github.com/hadleyhzy34/Dijkstra/blob/main/demo.png)
