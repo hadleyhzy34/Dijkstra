@@ -4,6 +4,8 @@
 #include <iostream>
 #include <limits.h>
 #include <limits>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 /* #include <map> */
 #include <memory>
 #include <unordered_map>

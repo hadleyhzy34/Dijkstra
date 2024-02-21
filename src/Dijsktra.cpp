@@ -178,7 +178,11 @@ void Dijkstra::printPath() {
     return;
   }
 
+  float reward = 15.0;
+  float sigma = 0.9;
+
   for (auto p : this->path) {
-    std::cout << p.first << " " << p.second << std::endl;
+    std::cout << p.first << " " << p.second << " " << reward << std::endl;
+    reward *= sigma;
   }
 }
